@@ -655,6 +655,7 @@ elif page == "About":
 **Made by:** {APP_AUTHOR}  
 **Description:**This Heart Disease Prediction System is an end-to-end machine learning application that analyzes key health parameters to estimate the risk of heart disease. It uses multiple ML algorithms—including Logistic Regression, SVM, Random Forest, XGBoost, KNN, Naïve Bayes, and Decision Trees—to provide an aggregated and reliable prediction. The system integrates essential ML concepts such as data preprocessing, feature scaling, cross-validation, hyperparameter tuning, and model evaluation (Accuracy, Precision, Recall, F1-Score, ROC-AUC).
 Built with Python, Streamlit, scikit-learn, Pandas, NumPy, XGBoost, SHAP, and Plotly, the app also offers interactive visualizations, feature importance analysis, model comparison, and a clean UI for seamless user experience. This project showcases skills in machine learning, data analysis, visualization, and full-stack ML deployment.
+""")
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --------------- Footer ---------------
