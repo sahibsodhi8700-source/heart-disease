@@ -659,6 +659,6 @@ Built with Python, Streamlit, scikit-learn, Pandas, NumPy, XGBoost, SHAP, and Pl
 """)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# --------------- Footer ---------------
+# --------------- Footer ----------------
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown(f"<div class='footer'>Made by <strong>{APP_AUTHOR}</strong> • ML Predictor • © {time.strftime('%Y')}</div>", unsafe_allow_html=True)
