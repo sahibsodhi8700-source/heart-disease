@@ -512,7 +512,9 @@ elif page == "Single Predict":
                 st.plotly_chart(fig_e, use_container_width=True)
 
         # SHAP interpretability for primary model
-     st.markdown("### 🔎 Interpretability (Primary Model)")
+        # 4 spaces per level (no tabs!)
+       # 4 spaces per level (no tabs!)
+st.markdown("### 🔎 Interpretability (Primary Model)")
 pmodel_name = primary_model_choice
 pmodel = MODELS.get(pmodel_name)
 
@@ -529,23 +531,23 @@ else:
             else:
                 explainer = shap.Explainer(pmodel.predict, input_df)
                 shap_vals = explainer(input_df)
-            
+
             # Convert to numpy array for feature importance
             if isinstance(shap_vals, list):
                 shap_arr = np.mean([np.abs(s.values) for s in shap_vals], axis=0)
             else:
                 shap_arr = np.abs(shap_vals.values).mean(axis=0)
-            
+
             df_shap = pd.DataFrame({
                 "feature": input_df.columns.tolist(),
                 "mean_abs_shap": shap_arr
             }).sort_values("mean_abs_shap", ascending=False)
-            
+
             st.bar_chart(df_shap.set_index("feature").head(8))
-        
+
         except Exception as e:
             st.error(f"SHAP compute failed: {e}")
-    
+
     else:
         st.info("Install `shap` to enable model interpretability; falling back to model-provided importances.")
         if hasattr(pmodel, "feature_importances_"):
@@ -556,7 +558,6 @@ else:
             coefs = np.abs(pmodel.coef_).ravel()
             df_coef = pd.DataFrame({"feature": input_df.columns.tolist(), "abs_coef": coefs}).sort_values("abs_coef", ascending=False)
             st.bar_chart(df_coef.set_index("feature").head(8))
-
 
         # PDF & CSV downloads
         st.markdown("### 📄 Export")
