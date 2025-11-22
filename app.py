@@ -575,9 +575,7 @@ else:
         out_df[f"{m}_Prediction"] = r.get("prediction")
         out_df[f"{m}_Probability"] = r.get("probability")
     st.markdown(df_to_link(out_df, "multi_model_single_prediction.csv"), unsafe_allow_html=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
-
+    st.markdown("</div>", unsafe_allow_html=True)
 
 elif page == "Bulk Predict":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
