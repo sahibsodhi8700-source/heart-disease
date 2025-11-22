@@ -1,8 +1,8 @@
-streamlit
-scikit-learn
-pandas
-numpy
+shap
+fpdf2
 plotly
-matplotlib
-joblib
-seaborn
+numpy
+pandas
+scikit-learn
+xgboost
+streamlit
