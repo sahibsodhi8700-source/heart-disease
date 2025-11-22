@@ -37,7 +37,7 @@ st.set_page_config(page_title="Heart Disease — ML Predictor (Sahib Sodhi)",
                    page_icon="❤️")
 
 APP_AUTHOR = "Sahib Singh Sodhi"
-APP_TITLE = "Heart Disease Prediction — Premium ML Dashboard (Dark)"
+APP_TITLE = "Heart Disease Prediction — Premium ML Dashboard"
 
 # --------------- Dark Premium CSS (Option A) ---------------
 st.markdown(
