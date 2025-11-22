@@ -513,8 +513,8 @@ elif page == "Single Predict":
 
         # SHAP interpretability for primary model
         # 4 spaces per level (no tabs!)
-       # 4 spaces per level (no tabs!)
-st.markdown("### 🔎 Interpretability (Primary Model)")
+    st.markdown("### 🔎 Interpretability (Primary Model)")
+
 pmodel_name = primary_model_choice
 pmodel = MODELS.get(pmodel_name)
 
@@ -559,26 +559,32 @@ else:
             df_coef = pd.DataFrame({"feature": input_df.columns.tolist(), "abs_coef": coefs}).sort_values("abs_coef", ascending=False)
             st.bar_chart(df_coef.set_index("feature").head(8))
 
-        # PDF & CSV downloads
-        st.markdown("### 📄 Export")
-        pdf_bytes, mime = make_pdf_report(inputs_pretty, results)
-        b64 = base64.b64encode(pdf_bytes).decode()
-        st.markdown(f'<a href="data:{mime};base64,{b64}" download="prediction_report.{"pdf" if FPDF_AVAILABLE else "txt"}">⬇️ Download Report</a>', unsafe_allow_html=True)
+    # PDF & CSV downloads
+    st.markdown("### 📄 Export")
+    pdf_bytes, mime = make_pdf_report(inputs_pretty, results)
+    b64 = base64.b64encode(pdf_bytes).decode()
+    st.markdown(
+        f'<a href="data:{mime};base64,{b64}" download="prediction_report.{"pdf" if FPDF_AVAILABLE else "txt"}">⬇️ Download Report</a>',
+        unsafe_allow_html=True
+    )
 
-        # CSV
-        out_df = input_df.copy()
-        for m in MODEL_NAMES:
-            r = results.get(m, {})
-            out_df[f"{m}_Prediction"] = r.get("prediction")
-            out_df[f"{m}_Probability"] = r.get("probability")
-        st.markdown(df_to_link(out_df, "multi_model_single_prediction.csv"), unsafe_allow_html=True)
+    # CSV
+    out_df = input_df.copy()
+    for m in MODEL_NAMES:
+        r = results.get(m, {})
+        out_df[f"{m}_Prediction"] = r.get("prediction")
+        out_df[f"{m}_Probability"] = r.get("probability")
+    st.markdown(df_to_link(out_df, "multi_model_single_prediction.csv"), unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
+
 
 elif page == "Bulk Predict":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.header("📂 Bulk Predictions (CSV)")
-    st.info("Upload a CSV with these columns (case-sensitive): Age, Sex, ChestPainType, RestingBP, Cholesterol, FastingBS, RestingECG, MaxHR, ExerciseAngina, Oldpeak, ST_Slope")
+    st.info(
+        "Upload a CSV with these columns (case-sensitive): Age, Sex, ChestPainType, RestingBP, Cholesterol, FastingBS, RestingECG, MaxHR, ExerciseAngina, Oldpeak, ST_Slope"
+    )
     uploaded = st.file_uploader("Upload CSV file", type=["csv"])
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -622,7 +628,8 @@ elif page == "Bulk Predict":
                             row = df_proc.iloc[[i]]
                             p, prob, err = predict_model(bulk_model, row.values)
                             if err:
-                                preds.append(None); probs.append(None)
+                                preds.append(None)
+                                probs.append(None)
                             else:
                                 preds.append("Heart Disease" if p==1 else "No Heart Disease")
                                 probs.append(prob)
@@ -635,16 +642,21 @@ elif page == "Bulk Predict":
                         st.dataframe(df_proc.head(200))
                         st.markdown(df_to_link(df_proc, "bulk_predictions.csv"), unsafe_allow_html=True)
 
+
 elif page == "Model Info":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.header("📊 Model Info & Diagnostics")
 
     st.markdown("### 3D Decision/Risk Surface")
-    x = np.linspace(30,80,40); y=np.linspace(80,200,40)
+    x = np.linspace(30,80,40)
+    y = np.linspace(80,200,40)
     Xg, Yg = np.meshgrid(x,y)
     Z = 100 - ((0.02*(Xg-55)**2) + (0.01*(Yg-140)**2))*2
     fig3 = go.Figure(data=[go.Surface(z=Z, x=Xg, y=Yg, colorscale='Viridis')])
-    fig3.update_layout(scene=dict(xaxis_title='Age', yaxis_title='MaxHR', zaxis_title='Risk Score'), height=520)
+    fig3.update_layout(
+        scene=dict(xaxis_title='Age', yaxis_title='MaxHR', zaxis_title='Risk Score'),
+        height=520
+    )
     st.plotly_chart(fig3, use_container_width=True)
 
     st.markdown("### Model Cards & Feature Importances")
@@ -670,6 +682,7 @@ elif page == "Model Info":
                     st.info("No importances/coefs available for this model.")
     st.markdown("</div>", unsafe_allow_html=True)
 
+
 elif page == "About":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.header("About")
@@ -684,5 +697,7 @@ Built with Python, Streamlit, scikit-learn, Pandas, NumPy, XGBoost, SHAP, and Pl
 
 # --------------- Footer ---------------
 st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown(f"<div class='footer'>Made by <strong>{APP_AUTHOR}</strong> • ML Predictor • © {time.strftime('%Y')}</div>", unsafe_allow_html=True)
-
+st.markdown(
+    f"<div class='footer'>Made by <strong>{APP_AUTHOR}</strong> • ML Predictor • © {time.strftime('%Y')}</div>",
+    unsafe_allow_html=True
+)
