@@ -575,7 +575,7 @@ else:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    elif page == "Bulk Predict":
+elif page == "Bulk Predict":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.header("📂 Bulk Predictions (CSV)")
     st.info("Upload a CSV with these columns (case-sensitive): Age, Sex, ChestPainType, RestingBP, Cholesterol, FastingBS, RestingECG, MaxHR, ExerciseAngina, Oldpeak, ST_Slope")
