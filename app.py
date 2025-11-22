@@ -510,65 +510,48 @@ elif page == "Single Predict":
                                                gauge={'axis': {'range': [0,100]}, 'bar': {'color': "#ffd371"}},
                                                title={'text': "Confidence"}))
                 st.plotly_chart(fig_e, use_container_width=True)
+                
+ st.markdown("### 🔎 Interpretability (Primary Model)")
+    pmodel_name = primary_model_choice
+    pmodel = MODELS.get(pmodel_name)
 
-        # SHAP interpretability for primary model
-        # 4 spaces per level (no tabs!)
-    st.markdown("### 🔎 Interpretability (Primary Model)")
-
-pmodel_name = primary_model_choice
-pmodel = MODELS.get(pmodel_name)
-
-if pmodel is None:
-    st.info(f"Primary model ({pmodel_name}) not available for explanations.")
-else:
-    if SHAP_AVAILABLE:
-        st.caption("Computing SHAP (may take a few seconds)...")
-        try:
-            # Tree-based models
-            if hasattr(pmodel, "predict_proba") and any(x in pmodel_name for x in ["Random", "Decision", "XGB"]):
-                explainer = shap.TreeExplainer(pmodel)
-                shap_vals = explainer(input_df)
-            else:
-                explainer = shap.Explainer(pmodel.predict, input_df)
-                shap_vals = explainer(input_df)
-
-            # Convert to numpy array for feature importance
-            if isinstance(shap_vals, list):
-                shap_arr = np.mean([np.abs(s.values) for s in shap_vals], axis=0)
-            else:
-                shap_arr = np.abs(shap_vals.values).mean(axis=0)
-
-            df_shap = pd.DataFrame({
-                "feature": input_df.columns.tolist(),
-                "mean_abs_shap": shap_arr
-            }).sort_values("mean_abs_shap", ascending=False)
-
-            st.bar_chart(df_shap.set_index("feature").head(8))
-
-        except Exception as e:
-            st.error(f"SHAP compute failed: {e}")
-
+    if pmodel is None:
+        st.info(f"Primary model ({pmodel_name}) not available for explanations.")
     else:
-        st.info("Install `shap` to enable model interpretability; falling back to model-provided importances.")
-        if hasattr(pmodel, "feature_importances_"):
-            fi = pmodel.feature_importances_
-            df_fi = pd.DataFrame({"feature": input_df.columns.tolist(), "importance": fi}).sort_values("importance", ascending=False)
-            st.bar_chart(df_fi.set_index("feature").head(8))
-        elif hasattr(pmodel, "coef_"):
-            coefs = np.abs(pmodel.coef_).ravel()
-            df_coef = pd.DataFrame({"feature": input_df.columns.tolist(), "abs_coef": coefs}).sort_values("abs_coef", ascending=False)
-            st.bar_chart(df_coef.set_index("feature").head(8))
+        if SHAP_AVAILABLE:
+            st.caption("Computing SHAP (may take a few seconds)...")
+            try:
+                if hasattr(pmodel, "predict_proba") and any(x in pmodel_name for x in ["Random", "Decision", "XGB"]):
+                    explainer = shap.TreeExplainer(pmodel)
+                    shap_vals = explainer(input_df)
+                else:
+                    explainer = shap.Explainer(pmodel.predict, input_df)
+                    shap_vals = explainer(input_df)
+
+                shap_arr = np.abs(shap_vals.values).mean(axis=0) if not isinstance(shap_vals, list) else np.mean([np.abs(s.values) for s in shap_vals], axis=0)
+                df_shap = pd.DataFrame({"feature": input_df.columns.tolist(), "mean_abs_shap": shap_arr}).sort_values("mean_abs_shap", ascending=False)
+                st.bar_chart(df_shap.set_index("feature").head(8))
+
+            except Exception as e:
+                st.error(f"SHAP compute failed: {e}")
+
+        else:
+            st.info("Install `shap` to enable model interpretability; falling back to model-provided importances.")
+            if hasattr(pmodel, "feature_importances_"):
+                fi = pmodel.feature_importances_
+                df_fi = pd.DataFrame({"feature": input_df.columns.tolist(), "importance": fi}).sort_values("importance", ascending=False)
+                st.bar_chart(df_fi.set_index("feature").head(8))
+            elif hasattr(pmodel, "coef_"):
+                coefs = np.abs(pmodel.coef_).ravel()
+                df_coef = pd.DataFrame({"feature": input_df.columns.tolist(), "abs_coef": coefs}).sort_values("abs_coef", ascending=False)
+                st.bar_chart(df_coef.set_index("feature").head(8))
 
     # PDF & CSV downloads
     st.markdown("### 📄 Export")
     pdf_bytes, mime = make_pdf_report(inputs_pretty, results)
     b64 = base64.b64encode(pdf_bytes).decode()
-    st.markdown(
-        f'<a href="data:{mime};base64,{b64}" download="prediction_report.{"pdf" if FPDF_AVAILABLE else "txt"}">⬇️ Download Report</a>',
-        unsafe_allow_html=True
-    )
+    st.markdown(f'<a href="data:{mime};base64,{b64}" download="prediction_report.{"pdf" if FPDF_AVAILABLE else "txt"}">⬇️ Download Report</a>', unsafe_allow_html=True)
 
-    # CSV
     out_df = input_df.copy()
     for m in MODEL_NAMES:
         r = results.get(m, {})
@@ -577,6 +560,8 @@ else:
     st.markdown(df_to_link(out_df, "multi_model_single_prediction.csv"), unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
+
+# ---------------- Bulk Predict ----------------
 elif page == "Bulk Predict":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
     st.header("📂 Bulk Predictions (CSV)")
