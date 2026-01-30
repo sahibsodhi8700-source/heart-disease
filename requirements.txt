@@ -6,3 +6,5 @@ pandas
 scikit-learn
 xgboost
 streamlit
+altair==4.2.2
+vega_datasets==0.9.0
